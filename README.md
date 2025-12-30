@@ -8,8 +8,8 @@
 
 3. Create Table and insert seed data by running:
    
-   *cd backend*
-   *npm i*
+   *cd backend*<br>
+   *npm i*<br>
    *node test-db.js*
 
 5. Backend setup:   
