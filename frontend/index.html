@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mini Detail Library</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    input, select, button {
+      padding: 6px;
+      margin: 5px 0;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    #suggestion {
+      margin-top: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Architectural Details</h2>
+
+  <input
+    id="search"
+    placeholder="Search details"
+    oninput="searchDetails()"
+  />
+
+  <ul id="details"></ul>
+
+  <hr />
+
+  <h3>Suggest Detail</h3>
+
+  <select id="host">
+    <option>External Wall</option>
+    <option>Window</option>
+    <option>Internal Wall</option>
+  </select>
+
+  <select id="adjacent">
+    <option>Slab</option>
+    <option>External Wall</option>
+    <option>Floor</option>
+  </select>
+
+  <select id="exposure">
+    <option>External</option>
+    <option>Internal</option>
+  </select>
+
+  <br />
+  <button onclick="suggestDetail()">Suggest</button>
+
+  <div id="suggestion"></div>
+
+  <script>
+    const API = "http://localhost:5000";
+
+    async function loadDetails() {
+      const res = await fetch(`${API}/details`);
+      const data = await res.json();
+      renderDetails(data);
+    }
+
+    async function searchDetails() {
+      const q = document.getElementById("search").value.trim();
+
+      if (q === "") {
+        loadDetails();
+        return;
+      }
+
+      const res = await fetch(`${API}/details/search?q=${q}`);
+      const data = await res.json();
+      renderDetails(data);
+    }
+
+    function renderDetails(response) {
+      const ul = document.getElementById("details");
+      ul.innerHTML = "";
+
+      response.data.forEach(d => {
+        ul.innerHTML += `
+          <li>
+            <b>${d.title}</b><br/>
+            <small>${d.category}</small>
+          </li>
+        `;
+      });
+    }
+
+    async function suggestDetail() {
+      const res = await fetch(`${API}/suggest-detail`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          host_element: host.value,
+          adjacent_element: adjacent.value,
+          exposure: exposure.value
+        })
+      });
+
+      const data = await res.json();
+      const div = document.getElementById("suggestion");
+
+      if (!data.detail) {
+        div.innerHTML = `${data.explanation}`;
+      } else {
+        div.innerHTML = `
+          <h4>${data.detail.title}</h4>
+          <p>${data.detail.description}</p>
+          <i>${data.explanation}</i>
+        `;
+      }
+    }
+
+    loadDetails();
+  </script>
+
+</body>
+</html>
