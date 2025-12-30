@@ -3,15 +3,19 @@
 ## Setup Instructions
 
 1. Create PostgreSQL database:
-   Name: Piaxis_local
+   
+    *Name: Piaxis_local*
 
-2. Create Table and insert seed data by running:
-    cd backend
-    npm i
-    node test-db.js
+3. Create Table and insert seed data by running:
+   
+   *cd backend*
+   *npm i*
+   *node test-db.js*
 
-3. Backend setup:   
-   node index.js
+5. Backend setup:   
 
-4. Frontend:
+   *node index.js*
+
+7. Frontend:
+   
    Open index.html in browser
